@@ -1,0 +1,449 @@
+.admin-body { background: var(--paper); }
+
+/* ---------- Login ---------- */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 36px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.login-logo {
+  height: 44px;
+  width: auto;
+  margin-bottom: 14px;
+}
+
+.login-mark {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.login-sub {
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  margin: 6px 0 20px;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+/* ---------- Admin shell ---------- */
+.admin-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  gap: 12px;
+}
+
+.admin-header-inner > div:first-child,
+.admin-header-inner {
+  flex-wrap: wrap;
+}
+
+.admin-brand-group {
+  display: flex;
+  align-items: center;
+}
+
+.admin-brand-logo {
+  height: 34px;
+  width: auto;
+}
+
+.admin-panel-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-left: 10px;
+}
+
+.admin-header-actions { display: flex; gap: 10px; }
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.ghost-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
+.admin-tabs {
+  display: flex;
+  gap: 6px;
+  padding-top: 18px;
+}
+
+.tab-btn {
+  background: transparent;
+  padding: 10px 18px;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.tab-btn.active {
+  background: var(--paper-raised);
+  color: var(--indigo);
+  border: 1px solid var(--line);
+  border-bottom-color: var(--paper-raised);
+  margin-bottom: -1px;
+}
+
+.admin-main {
+  padding: 24px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 0 10px 10px 10px;
+  margin-top: -1px;
+  min-height: 60vh;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel-head h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0;
+}
+
+.primary-btn {
+  background: var(--indigo);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.primary-btn:hover { background: var(--indigo-deep); }
+
+.stats-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.stat-pill {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+}
+
+/* ---------- Tables ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.data-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+.table-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #EFEAE0;
+}
+
+.table-actions { display: flex; gap: 8px; }
+
+.icon-btn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.icon-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
+.icon-btn.danger:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.badge.active { background: rgba(111,143,107,0.15); color: var(--sage); }
+.badge.inactive { background: rgba(180,83,42,0.12); color: var(--terracotta); }
+
+.status-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.status-select.Pending { color: var(--marigold-deep); }
+.status-select.Confirmed { color: var(--indigo); }
+.status-select.Delivered { color: var(--sage); }
+.status-select.Cancelled { color: var(--terracotta); }
+
+.order-items-cell {
+  font-size: 12px;
+  color: var(--ink-soft);
+  max-width: 220px;
+}
+
+.checkbox-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.checkbox-field input { width: auto; }
+
+#imagePreviewWrap { margin-top: 10px; }
+
+#imagePreviewWrap img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 720px) {
+  .data-table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+
+/* ---------- Panel notes / field hints ---------- */
+.panel-note {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin: -10px 0 18px;
+}
+
+.field-hint {
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  margin-top: 5px;
+}
+
+/* ---------- Settings ---------- */
+.settings-card {
+  max-width: 420px;
+}
+
+/* ---------- Gallery / banner admin grids ---------- */
+.media-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.media-admin-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper);
+  position: relative;
+}
+
+.media-admin-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.banner-admin-item img { aspect-ratio: 16 / 6; }
+
+.media-admin-caption {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.media-admin-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+
+.media-admin-actions .icon-btn { flex: 1; }
+
+/* ---------- Product image slots (up to 4) ---------- */
+.product-image-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.image-slot input[type="file"] {
+  font-size: 11.5px;
+}
+
+.image-slot-preview { margin-top: 6px; }
+
+.image-slot-preview img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .product-image-slots { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Admin order rows (extends shared .order-collapsible in style.css) ---------- */
+.order-summary-customer { color: var(--ink-soft); font-size: 12px; }
+
+.order-admin-address {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.order-admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Printable bill ---------- */
+.bill-card {
+  max-width: 480px;
+  font-family: var(--font-mono);
+}
+
+.bill-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.bill-logo { height: 36px; width: auto; margin: 0 auto 8px; }
+
+.bill-order-id { font-weight: 700; font-size: 16px; }
+.bill-date { color: var(--ink-soft); font-size: 12px; margin-top: 2px; }
+
+.bill-customer {
+  font-size: 12.5px;
+  line-height: 1.6;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  padding: 10px 0;
+  margin-bottom: 12px;
+}
+
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  margin-bottom: 12px;
+}
+
+.bill-table th {
+  text-align: left;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.bill-table td { padding: 6px 4px; border-bottom: 1px dashed var(--line); }
+.bill-table .num, .bill-table th.num { text-align: right; }
+
+.bill-totals { font-size: 13px; }
+
+.bill-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.bill-grand {
+  font-weight: 700;
+  font-size: 14.5px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 6px;
+}
+
+.bill-footer {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 16px;
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #billModal, #billModal * { visibility: visible; }
+  #billModal { position: absolute; inset: 0; background: #fff; }
+  .no-print { display: none !important; }
+  .modal-card { box-shadow: none; max-width: 100%; }
+}

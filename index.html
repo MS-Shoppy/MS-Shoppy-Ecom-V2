@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS-Shoppy — Shop</title>
+<meta name="description" content="From Handmade Creations to Healthy Traditions. Order online, pay cash on delivery.">
+<link rel="icon" type="image/png" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand">
+      <img class="brand-logo" src="assets/img/logo.png" alt="MS-Shoppy">
+      <span class="brand-tag" id="siteTagEl">Everyday goods, delivered.</span>
+    </div>
+    <div class="header-actions">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search products…">
+      </div>
+      <button class="account-button" id="accountBtn">
+        <span id="accountBtnLabel">Sign in</span>
+      </button>
+      <button class="cart-button" id="openCartBtn">
+        Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="banner-carousel" id="bannerCarousel" style="display:none;">
+  <div class="banner-track" id="bannerTrack"></div>
+  <div class="banner-dots" id="bannerDots"></div>
+  <button class="banner-arrow banner-arrow-prev" id="bannerPrev" aria-label="Previous">&#10094;</button>
+  <button class="banner-arrow banner-arrow-next" id="bannerNext" aria-label="Next">&#10095;</button>
+</section>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-eyebrow">Cash on delivery, everywhere we ship</span>
+    <h1>Order today, pay at your doorstep.</h1>
+    <p>No card, no advance, no fuss — just tell us where to bring it.</p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="category-row" id="categoryRow">
+    <button class="chip active" data-category="all">All</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <div class="loading-state">Loading products…</div>
+  </div>
+
+  <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
+    <button class="ghost-btn-lg" id="showMoreBtn">Show more products</button>
+  </div>
+
+  <section class="gallery-section" id="gallerySection" style="display:none;">
+    <h2 class="section-heading">Gallery</h2>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </section>
+</main>
+
+<footer class="site-footer container">
+  <div class="social-icons">
+    <a href="https://wa.me/919940959840" target="_blank" aria-label="WhatsApp" class="whatsapp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <a href="https://www.instagram.com/msshoppyecom?utm_source=qr&igsh=ZGlpeWw3YzUzcG15" target="_blank" aria-label="Instagram" class="instagram">
+        <i class="fab fa-instagram"></i>
+    </a>
+
+    <a href="https://youtube.com/@msshoppyecom?si=6eFh8yJDC2YISSK5" target="_blank" aria-label="YouTube"  class="youtube">
+        <i class="fab fa-youtube"></i>
+    </a>
+</div>
+  <span>&copy; <span id="yearEl"></span> <span id="footerNameEl">MS Shoppy</span></span>
+  <span id="supportEl"></span>
+</footer>
+
+<!-- Cart drawer -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <h2>Your cart</h2>
+    <button class="drawer-close" id="closeCartBtn">&times;</button>
+  </div>
+  <div class="drawer-body" id="cartBody"></div>
+  <div class="drawer-footer" id="cartFooter" style="display:none;">
+    <div class="subtotal-row">
+      <span>Subtotal</span>
+      <strong id="cartSubtotal">₹0</strong>
+    </div>
+    <div class="subtotal-row delivery-row" id="deliveryRow">
+      <span>Delivery</span>
+      <strong id="cartDelivery">₹0</strong>
+    </div>
+    <div class="subtotal-row grand-total-row">
+      <span>Total to pay</span>
+      <strong id="cartGrandTotal">₹0</strong>
+    </div>
+    <div class="free-delivery-note" id="freeDeliveryNote"></div>
+    <button class="checkout-btn" id="checkoutBtn">Proceed to checkout</button>
+  </div>
+</aside>
+
+<!-- Checkout modal -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-card">
+    <h2>Delivery details</h2>
+    <p class="modal-sub">We'll use this to deliver your order and collect payment.</p>
+    <div class="cod-note">💵 Pay in cash when your order arrives. No online payment needed.</div>
+    <div class="cod-note call-note">📞 Our executive will call you shortly to confirm your order.</div>
+    <div class="form-error" id="checkoutError"></div>
+    <form id="checkoutForm">
+      <div class="field">
+        <label for="custName">Full name</label>
+        <input type="text" id="custName" required>
+        <div class="field-error">Please enter your name</div>
+      </div>
+      <div class="field">
+        <label for="custMobile">Mobile number</label>
+        <input type="tel" id="custMobile" maxlength="10" placeholder="10-digit mobile number" required>
+        <div class="field-error">Enter a valid 10-digit mobile number</div>
+      </div>
+      <div class="field">
+        <label for="custAddress">Address</label>
+        <textarea id="custAddress" rows="2" placeholder="House no., street, area" required></textarea>
+        <div class="field-error">Please enter your delivery address</div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="custCity">City</label>
+          <input type="text" id="custCity" required>
+          <div class="field-error">Required</div>
+        </div>
+        <div class="field">
+          <label for="custPincode">Pincode</label>
+          <input type="text" id="custPincode" maxlength="6" required>
+          <div class="field-error">Enter a valid 6-digit pincode</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="custLandmark">Landmark (optional)</label>
+        <input type="text" id="custLandmark">
+      </div>
+      <div class="field">
+        <label for="custNotes">Order notes (optional)</label>
+        <input type="text" id="custNotes" placeholder="e.g. call before delivery">
+      </div>
+      <button type="submit" class="checkout-btn" id="placeOrderBtn">Place order — Pay on delivery</button>
+    </form>
+  </div>
+</div>
+
+<!-- Confirmation modal -->
+<div class="modal" id="confirmModal">
+  <div class="modal-card">
+    <div class="receipt" id="receiptContent"></div>
+  </div>
+</div>
+
+<!-- Gallery lightbox -->
+<div class="modal" id="lightboxModal">
+  <div class="modal-card lightbox-card">
+    <button class="drawer-close lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<!-- Product video modal -->
+<div class="modal" id="videoModal">
+  <div class="modal-card video-card">
+    <button class="drawer-close lightbox-close" id="videoClose">&times;</button>
+    <div class="video-embed-wrap" id="videoEmbedWrap"></div>
+  </div>
+</div>
+
+<!-- Login / OTP modal -->
+<div class="modal" id="loginModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="loginModalClose" aria-label="Close">&times;</button>
+    <h2>Sign in</h2>
+    <p class="modal-sub" id="loginModalSub">Enter your email to receive a one-time login code. You'll need this to place an order.</p>
+    <div class="form-error" id="loginModalError"></div>
+
+    <form id="emailForm">
+      <div class="field">
+        <label for="loginEmail">Email address</label>
+        <input type="email" id="loginEmail" required placeholder="you@example.com">
+      </div>
+      <button type="submit" class="checkout-btn" id="sendOtpBtn">Send login code</button>
+    </form>
+
+    <form id="otpForm" style="display:none;">
+      <div class="field">
+        <label for="loginOtp">Enter the 6-digit code sent to <strong id="otpEmailLabel"></strong></label>
+        <input type="text" id="loginOtp" maxlength="6" inputmode="numeric" required placeholder="123456">
+      </div>
+      <button type="submit" class="checkout-btn" id="verifyOtpBtn">Verify &amp; sign in</button>
+      <button type="button" class="link-btn" id="resendOtpBtn">Resend code</button>
+    </form>
+
+    <form id="profileForm" style="display:none;">
+      <p class="modal-sub">Just one more step — tell us your name and mobile number.</p>
+      <div class="field">
+        <label for="profileName">Full name</label>
+        <input type="text" id="profileName" required>
+      </div>
+      <div class="field">
+        <label for="profileMobile">Mobile number</label>
+        <input type="tel" id="profileMobile" maxlength="10" required placeholder="10-digit mobile number">
+      </div>
+      <button type="submit" class="checkout-btn" id="saveProfileBtn">Continue</button>
+    </form>
+  </div>
+</div>
+
+<!-- Account modal -->
+<div class="modal" id="accountModal">
+  <div class="modal-card account-card">
+    <button type="button" class="modal-close" id="accountModalClose" aria-label="Close">&times;</button>
+    <h2>My account</h2>
+    <div class="account-info" id="accountInfo"></div>
+    <button class="icon-btn" id="logoutBtn">Log out</button>
+    <h3 class="section-heading-sm">My orders</h3>
+    <div id="myOrdersWrap"><div class="loading-state">Loading your orders…</div></div>
+  </div>
+</div>
+
+<!-- Product detail overlay -->
+<div class="modal" id="productDetailModal">
+  <div class="modal-card product-detail-card">
+    <button type="button" class="modal-close" id="productDetailClose" aria-label="Close">&times;</button>
+    <div id="productDetailContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/store.js"></script>
+</body>
+</html>

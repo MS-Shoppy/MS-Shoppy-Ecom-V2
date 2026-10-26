@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS-Shoppy — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin-body">
+
+<!-- Login screen -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <img class="brand-logo login-logo" src="assets/img/logo.png" alt="MS-Shoppy">
+    <span class="login-mark">Admin</span>
+    <p class="login-sub">Sign in to manage products and orders.</p>
+    <div class="form-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" required autofocus>
+      </div>
+      <button type="submit" class="checkout-btn" id="loginBtn">Sign in</button>
+    </form>
+    <a class="back-link" href="index.html">&larr; Back to store</a>
+  </div>
+</div>
+
+<!-- Admin dashboard -->
+<div class="admin-wrap" id="adminWrap" style="display:none;">
+  <header class="admin-header">
+    <div class="container admin-header-inner">
+      <div class="admin-brand-group">
+        <img class="brand-logo admin-brand-logo" src="assets/img/logo.png" alt="MS-Shoppy Admin">
+        <span class="admin-panel-label">Admin panel</span>
+      </div>
+      <div class="admin-header-actions">
+        <a href="index.html" target="_blank" class="ghost-btn">View store</a>
+        <button class="ghost-btn" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="admin-tabs container">
+    <button class="tab-btn active" data-tab="products">Products</button>
+    <button class="tab-btn" data-tab="orders">Orders</button>
+    <button class="tab-btn" data-tab="gallery">Gallery</button>
+    <button class="tab-btn" data-tab="banners">Banners</button>
+    <button class="tab-btn" data-tab="settings">Delivery</button>
+  </nav>
+
+  <main class="container admin-main">
+
+    <!-- Products tab -->
+    <section id="tab-products" class="tab-panel active">
+      <div class="panel-head">
+        <h2>Products</h2>
+        <button class="primary-btn" id="newProductBtn">+ Add product</button>
+      </div>
+      <div id="productsTableWrap">
+        <div class="loading-state">Loading products…</div>
+      </div>
+    </section>
+
+    <!-- Orders tab -->
+    <section id="tab-orders" class="tab-panel">
+      <div class="panel-head">
+        <h2>Orders</h2>
+        <div class="stats-row" id="orderStats"></div>
+      </div>
+      <div id="ordersListWrap">
+        <div class="loading-state">Loading orders…</div>
+      </div>
+    </section>
+
+    <!-- Gallery tab -->
+    <section id="tab-gallery" class="tab-panel">
+      <div class="panel-head">
+        <h2>Gallery</h2>
+        <button class="primary-btn" id="newGalleryBtn">+ Add photo</button>
+      </div>
+      <p class="panel-note">Photos shown here appear in a gallery section on your storefront.</p>
+      <div id="galleryAdminWrap">
+        <div class="loading-state">Loading gallery…</div>
+      </div>
+    </section>
+
+    <!-- Banners tab -->
+    <section id="tab-banners" class="tab-panel">
+      <div class="panel-head">
+        <h2>Banners</h2>
+        <button class="primary-btn" id="newBannerBtn">+ Add banner</button>
+      </div>
+      <p class="panel-note">Banners auto-scroll at the top of your storefront. Add an optional link to open when tapped.</p>
+      <div id="bannerAdminWrap">
+        <div class="loading-state">Loading banners…</div>
+      </div>
+    </section>
+
+    <!-- Settings tab -->
+    <section id="tab-settings" class="tab-panel">
+      <div class="panel-head">
+        <h2>Delivery charges</h2>
+      </div>
+      <div class="settings-card">
+        <div class="form-error" id="settingsError"></div>
+        <form id="settingsForm">
+          <div class="field">
+            <label for="deliveryCharge">Delivery charge (₹)</label>
+            <input type="number" id="deliveryCharge" min="0" step="1" required>
+          </div>
+          <div class="field">
+            <label for="freeDeliveryThreshold">Free delivery above order value (₹)</label>
+            <input type="number" id="freeDeliveryThreshold" min="0" step="1" required>
+            <div class="field-hint">Set to 0 if you never want to waive delivery charges.</div>
+          </div>
+          <button type="submit" class="checkout-btn" id="saveSettingsBtn">Save delivery settings</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Product editor modal -->
+<div class="modal" id="productModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="productModalClose" aria-label="Close">&times;</button>
+    <h2 id="productModalTitle">Add product</h2>
+    <div class="form-error" id="productError"></div>
+    <form id="productForm">
+      <input type="hidden" id="prodId">
+      <div class="field">
+        <label for="prodName">Product name</label>
+        <input type="text" id="prodName" required>
+      </div>
+      <div class="field">
+        <label for="prodDescription">Description</label>
+        <textarea id="prodDescription" rows="2"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="prodPrice">Price (₹)</label>
+          <input type="number" id="prodPrice" min="0" step="0.01" required>
+        </div>
+        <div class="field">
+          <label for="prodStock">Stock quantity</label>
+          <input type="number" id="prodStock" min="0" step="1" value="0" required>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="prodDiscount">Discount (%)</label>
+          <input type="number" id="prodDiscount" min="0" max="95" step="1" value="0">
+          <div class="field-hint">Storefront shows the original price struck through with the discounted price.</div>
+        </div>
+        <div class="field">
+          <label for="prodCategory">Category</label>
+          <input type="text" id="prodCategory" placeholder="e.g. Snacks">
+        </div>
+      </div>
+      <div class="field">
+        <label for="prodVideoUrl">Video URL (YouTube / Instagram, optional)</label>
+        <input type="url" id="prodVideoUrl" placeholder="https://youtube.com/watch?v=...">
+        <div class="field-hint">YouTube links play inline; other links (e.g. Instagram) open in a new tab.</div>
+      </div>
+      <div class="field">
+        <label>Product photos (up to 4)</label>
+        <div class="field-hint">First photo is used as the main thumbnail. The others show in the product detail gallery.</div>
+        <div class="product-image-slots">
+          <div class="image-slot">
+            <input type="file" id="prodImage1" accept="image/*">
+            <div id="imagePreviewWrap1" class="image-slot-preview"></div>
+          </div>
+          <div class="image-slot">
+            <input type="file" id="prodImage2" accept="image/*">
+            <div id="imagePreviewWrap2" class="image-slot-preview"></div>
+          </div>
+          <div class="image-slot">
+            <input type="file" id="prodImage3" accept="image/*">
+            <div id="imagePreviewWrap3" class="image-slot-preview"></div>
+          </div>
+          <div class="image-slot">
+            <input type="file" id="prodImage4" accept="image/*">
+            <div id="imagePreviewWrap4" class="image-slot-preview"></div>
+          </div>
+        </div>
+      </div>
+      <div class="field checkbox-field">
+        <label><input type="checkbox" id="prodActive" checked> Visible in store</label>
+      </div>
+      <button type="submit" class="checkout-btn" id="saveProductBtn">Save product</button>
+    </form>
+  </div>
+</div>
+
+<!-- Gallery photo modal -->
+<div class="modal" id="galleryModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="galleryModalClose" aria-label="Close">&times;</button>
+    <h2>Add gallery photo</h2>
+    <div class="form-error" id="galleryError"></div>
+    <form id="galleryForm">
+      <div class="field">
+        <label for="galleryImage">Photo</label>
+        <input type="file" id="galleryImage" accept="image/*" required>
+        <div id="galleryPreviewWrap"></div>
+      </div>
+      <div class="field">
+        <label for="galleryCaption">Caption (optional)</label>
+        <input type="text" id="galleryCaption" placeholder="e.g. Our Diwali collection">
+      </div>
+      <button type="submit" class="checkout-btn" id="saveGalleryBtn">Add photo</button>
+    </form>
+  </div>
+</div>
+
+<!-- Banner modal -->
+<div class="modal" id="bannerModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="bannerModalClose" aria-label="Close">&times;</button>
+    <h2>Add banner</h2>
+    <div class="form-error" id="bannerError"></div>
+    <form id="bannerForm">
+      <div class="field">
+        <label for="bannerImage">Banner image — upload at 1500×500px (3:1) for a clean fit on every screen</label>
+        <input type="file" id="bannerImage" accept="image/*" required>
+        <div id="bannerPreviewWrap"></div>
+      </div>
+      <div class="field">
+        <label for="bannerLink">Link URL (optional)</label>
+        <input type="url" id="bannerLink" placeholder="https://...">
+      </div>
+      <button type="submit" class="checkout-btn" id="saveBannerBtn">Add banner</button>
+    </form>
+  </div>
+</div>
+
+<!-- Printable bill -->
+<div class="modal" id="billModal">
+  <div class="modal-card bill-card">
+    <button type="button" class="modal-close no-print" id="billModalClose" aria-label="Close">&times;</button>
+    <div id="billContent"></div>
+    <button class="checkout-btn no-print" id="printBillBtn">Print / Save as PDF</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
