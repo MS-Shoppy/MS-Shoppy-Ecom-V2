@@ -319,86 +319,164 @@ function openAccount() {
   loadMyOrders();
 }
 
+let MY_ORDERS = [];
+const MY_VIEW = { q: '', status: '', period: '', sort: 'newest', shown: 10 };
+const MY_OPEN = new Set();
+const TRACK_STEPS = ['Pending', 'Confirmed', 'Out for delivery', 'Delivered'];
+
 async function loadMyOrders() {
   const wrap = document.getElementById('myOrdersWrap');
   wrap.innerHTML = '<div class="loading-state">Loading your orders…</div>';
   try {
     const data = await callApi('getMyOrders', { token: CUSTOMER.token });
-    renderMyOrders(data.orders || []);
+    MY_ORDERS = data.orders || [];
+    MY_VIEW.shown = 10;
+    renderMyOrders();
   } catch (err) {
+    document.getElementById('myOrdersTools').style.display = 'none';
     wrap.innerHTML = `<div class="empty-state">${escapeHtml(err.message)}</div>`;
   }
 }
 
-function renderMyOrders(orders) {
+function myOrderWasEdited(o) {
+  return o.originalAmount !== '' && o.originalAmount !== undefined && Number(o.originalAmount) !== Number(o.totalAmount);
+}
+
+function filteredMyOrders() {
+  const v = MY_VIEW;
+  const q = v.q.trim().toLowerCase();
+  const now = Date.now();
+  const days = { '30': 30, '90': 90, '365': 365 }[v.period];
+  const t = o => new Date(o.timestamp).getTime() || 0;
+
+  const rows = MY_ORDERS.filter(o => {
+    if (v.status === 'active') {
+      if (o.status === 'Delivered' || o.status === 'Cancelled') return false;
+    } else if (v.status && o.status !== v.status) return false;
+    if (days && now - t(o) > days * 86400000) return false;
+    if (q) {
+      const hay = [o.orderId].concat((o.items || []).map(i => i.productName)).join(' | ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const sorters = {
+    newest: (a, b) => t(b) - t(a),
+    oldest: (a, b) => t(a) - t(b),
+    amountDesc: (a, b) => Number(b.totalAmount) - Number(a.totalAmount),
+    amountAsc: (a, b) => Number(a.totalAmount) - Number(b.totalAmount),
+  };
+  return rows.sort(sorters[v.sort] || sorters.newest);
+}
+
+function renderMyOrders() {
   const wrap = document.getElementById('myOrdersWrap');
-  if (orders.length === 0) {
+  const tools = document.getElementById('myOrdersTools');
+  const countEl = document.getElementById('myOrdersCount');
+
+  if (MY_ORDERS.length === 0) {
+    tools.style.display = 'none';
     wrap.innerHTML = '<div class="empty-state">No orders yet. Start shopping!</div>';
     return;
   }
-  wrap.innerHTML = orders.map(o => `
-    <div class="order-collapsible" data-order-id="${escapeHtml(o.orderId)}">
+  tools.style.display = '';
+
+  const rows = filteredMyOrders();
+  const activeCount = MY_ORDERS.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled').length;
+  countEl.textContent = `${rows.length} of ${MY_ORDERS.length} orders` + (activeCount ? ` · ${activeCount} in progress` : '');
+
+  if (rows.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">No orders match your search or filters.</div>';
+    return;
+  }
+
+  const visible = rows.slice(0, MY_VIEW.shown);
+  wrap.innerHTML = visible.map(o => {
+    const open = MY_OPEN.has(String(o.orderId));
+    return `
+    <div class="order-collapsible ${open ? 'open' : ''}" data-order-id="${escapeHtml(o.orderId)}">
       <button class="order-summary-row" data-toggle-order="${escapeHtml(o.orderId)}">
         <span class="order-summary-id">#${escapeHtml(o.orderId)}</span>
         <span class="order-summary-date">${formatDate(o.timestamp)}</span>
-        <span class="order-summary-count">${escapeHtml(o.itemCount)} item(s) · Qty ${escapeHtml(o.totalQty)}</span>
+        <span class="order-summary-count">${escapeHtml(o.itemCount)} item(s) · Qty ${escapeHtml(o.totalQty)}${o.remarks ? ' · 💬 note' : ''}</span>
         <span class="order-summary-total">${formatMoney(o.totalAmount)}</span>
         <span class="status-pill status-${escapeHtml((o.status || '').replace(/\s/g, ''))}">${escapeHtml(o.status)}</span>
         <span class="order-caret">&#9662;</span>
       </button>
-      <div class="order-items-panel" id="order-items-${escapeHtml(o.orderId)}"></div>
-    </div>
-  `).join('');
+      <div class="order-items-panel">${orderItemsTableHtml(o, o.items || [])}</div>
+    </div>`;
+  }).join('') + (rows.length > visible.length
+    ? `<div class="show-more-wrap"><button class="ghost-btn-lg" id="myOrdersMore">Show more (${rows.length - visible.length} left)</button></div>`
+    : '');
 
   wrap.querySelectorAll('[data-toggle-order]').forEach(btn => {
-    btn.addEventListener('click', () => toggleMyOrderItems(btn.dataset.toggleOrder));
+    btn.addEventListener('click', () => {
+      const id = String(btn.dataset.toggleOrder);
+      const row = btn.closest('.order-collapsible');
+      if (MY_OPEN.has(id)) { MY_OPEN.delete(id); row.classList.remove('open'); }
+      else { MY_OPEN.add(id); row.classList.add('open'); }
+    });
+  });
+  const more = document.getElementById('myOrdersMore');
+  if (more) more.addEventListener('click', () => { MY_VIEW.shown += 10; renderMyOrders(); });
+}
+
+function bindMyOrderTools() {
+  const rerender = () => { MY_VIEW.shown = 10; renderMyOrders(); };
+  let timer;
+  document.getElementById('mySearch').addEventListener('input', (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { MY_VIEW.q = e.target.value; rerender(); }, 200);
+  });
+  document.getElementById('myStatus').addEventListener('change', (e) => { MY_VIEW.status = e.target.value; rerender(); });
+  document.getElementById('myPeriod').addEventListener('change', (e) => { MY_VIEW.period = e.target.value; rerender(); });
+  document.getElementById('mySort').addEventListener('change', (e) => { MY_VIEW.sort = e.target.value; rerender(); });
+  document.getElementById('myRefresh').addEventListener('click', loadMyOrders);
+  document.getElementById('myClear').addEventListener('click', () => {
+    Object.assign(MY_VIEW, { q: '', status: '', period: '', sort: 'newest', shown: 10 });
+    ['mySearch', 'myStatus', 'myPeriod'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('mySort').value = 'newest';
+    renderMyOrders();
   });
 }
 
-async function toggleMyOrderItems(orderId) {
-  const panel = document.getElementById(`order-items-${orderId}`);
-  const row = document.querySelector(`.order-collapsible[data-order-id="${orderId}"]`);
-  const isOpen = row.classList.contains('open');
-
-  if (isOpen) {
-    row.classList.remove('open');
-    return;
-  }
-  row.classList.add('open');
-  if (panel.dataset.loaded) return;
-
-  panel.innerHTML = '<div class="loading-state">Loading items…</div>';
-  try {
-    const data = await callApi('getOrderItems', { token: CUSTOMER.token, orderId });
-    panel.innerHTML = orderItemsTableHtml(data.order, data.items);
-    panel.dataset.loaded = 'true';
-  } catch (err) {
-    panel.innerHTML = `<div class="empty-state">${escapeHtml(err.message)}</div>`;
-  }
+function trackerHtml(status) {
+  if (status === 'Cancelled') return '<div class="order-cancelled-note">This order was cancelled.</div>';
+  const idx = Math.max(0, TRACK_STEPS.indexOf(status));
+  return `<div class="order-tracker">${TRACK_STEPS.map((s, i) =>
+    `<div class="track-step ${i < idx ? 'done' : ''} ${i === idx ? 'current' : ''}"><span class="track-dot"></span><span class="track-label">${s}</span></div>`
+  ).join('')}</div>`;
 }
 
 function orderItemsTableHtml(order, items) {
-  const rows = items.map(i => `
-    <tr>
-      <td>${escapeHtml(i.productName)}</td>
-      <td>${escapeHtml(i.qty)}</td>
+  const rows = items.map(i => {
+    const ordered = Number(i.originalQty !== '' && i.originalQty !== undefined ? i.originalQty : i.qty);
+    const qty = Number(i.qty);
+    const cut = qty < ordered;
+    return `
+    <tr class="${cut && qty === 0 ? 'item-unavailable' : ''}">
+      <td>${escapeHtml(i.productName)}${cut && qty === 0 ? ' <small>— not available</small>' : ''}</td>
+      <td>${qty}${cut ? ` <small class="qty-was">(ordered ${ordered})</small>` : ''}</td>
       <td>${formatMoney(i.price)}</td>
       <td>${formatMoney(i.amount)}</td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
   const deliveryLine = Number(order.deliveryCharge) > 0
     ? `Delivery charge: ${formatMoney(order.deliveryCharge)}`
     : 'Delivery: Free';
 
   return `
+    ${trackerHtml(order.status)}
     <table class="order-items-table">
       <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     <div class="order-items-footer">
       <span>${deliveryLine}</span>
-      <strong>Total: ${formatMoney(order.totalAmount)}</strong>
+      <strong>${myOrderWasEdited(order) ? `<s class="was-total">${formatMoney(order.originalAmount)}</s> ` : ''}Total: ${formatMoney(order.totalAmount)}</strong>
     </div>
+    ${order.remarks ? `<div class="order-remarks"><strong>Note from ${escapeHtml(CONFIG.SITE_NAME || 'the store')}:</strong> ${escapeHtml(order.remarks)}</div>` : ''}
   `;
 }
 
@@ -750,6 +828,7 @@ function bindEvents() {
   });
   document.getElementById('productDetailClose').addEventListener('click', () => closeModal('productDetailModal'));
   document.getElementById('accountModalClose').addEventListener('click', () => closeModal('accountModal'));
+  bindMyOrderTools();
   document.getElementById('logoutBtn').addEventListener('click', logout);
 
   document.getElementById('showMoreBtn').addEventListener('click', () => {
@@ -876,6 +955,7 @@ async function handleCheckoutSubmit(e) {
   } catch (err) {
     errorBox.textContent = err.message;
     errorBox.classList.add('show');
+    loadProducts(); // stock may have changed — show the latest numbers
   } finally {
     btn.disabled = false;
     btn.textContent = 'Place order — Pay on delivery';

@@ -49,7 +49,7 @@
     <button class="tab-btn" data-tab="orders">Orders</button>
     <button class="tab-btn" data-tab="gallery">Gallery</button>
     <button class="tab-btn" data-tab="banners">Banners</button>
-    <button class="tab-btn" data-tab="settings">Delivery</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
   </nav>
 
   <main class="container admin-main">
@@ -60,9 +60,36 @@
         <h2>Products</h2>
         <button class="primary-btn" id="newProductBtn">+ Add product</button>
       </div>
+
+      <div class="bulk-bar">
+        <strong>Bulk discount</strong>
+        <select id="bulkCategory"></select>
+        <input type="number" id="bulkDiscount" min="0" max="95" step="1" placeholder="%" aria-label="Discount percent">
+        <button class="primary-btn" id="bulkApplyBtn">Apply</button>
+        <span class="bulk-hint">Sets the same discount on every product in the category. Edit a single product afterwards to override it. Use 0 to remove discounts.</span>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="prodSearch" placeholder="Search name or category…">
+        <select id="prodCategoryFilter"></select>
+        <select id="prodStatusFilter">
+          <option value="">All visibility</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+        </select>
+        <select id="prodStockFilter">
+          <option value="">All stock</option>
+          <option value="low">Low stock (≤ 5)</option>
+          <option value="out">Out of stock</option>
+          <option value="discounted">Discounted</option>
+        </select>
+        <button class="icon-btn" id="prodClearBtn">Clear</button>
+        <span class="result-count" id="prodCount"></span>
+      </div>
       <div id="productsTableWrap">
         <div class="loading-state">Loading products…</div>
       </div>
+      <div class="pager" id="prodPager"></div>
     </section>
 
     <!-- Orders tab -->
@@ -71,9 +98,27 @@
         <h2>Orders</h2>
         <div class="stats-row" id="orderStats"></div>
       </div>
+      <div class="toolbar">
+        <input type="search" id="ordSearch" placeholder="Search order no., name, mobile, email, city…">
+        <select id="ordStatusFilter"></select>
+        <label class="date-filter">From <input type="date" id="ordFrom"></label>
+        <label class="date-filter">To <input type="date" id="ordTo"></label>
+        <select id="ordSort">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="amountDesc">Amount: high → low</option>
+          <option value="amountAsc">Amount: low → high</option>
+          <option value="qtyDesc">Quantity: high → low</option>
+          <option value="customer">Customer A → Z</option>
+        </select>
+        <button class="icon-btn" id="ordClearBtn">Clear</button>
+        <button class="icon-btn" id="ordCsvBtn">Export CSV</button>
+        <span class="result-count" id="ordCount"></span>
+      </div>
       <div id="ordersListWrap">
         <div class="loading-state">Loading orders…</div>
       </div>
+      <div class="pager" id="ordPager"></div>
     </section>
 
     <!-- Gallery tab -->
@@ -103,11 +148,12 @@
     <!-- Settings tab -->
     <section id="tab-settings" class="tab-panel">
       <div class="panel-head">
-        <h2>Delivery charges</h2>
+        <h2>Settings</h2>
       </div>
       <div class="settings-card">
         <div class="form-error" id="settingsError"></div>
         <form id="settingsForm">
+          <h3 class="section-heading-sm">Delivery charges</h3>
           <div class="field">
             <label for="deliveryCharge">Delivery charge (₹)</label>
             <input type="number" id="deliveryCharge" min="0" step="1" required>
@@ -117,7 +163,13 @@
             <input type="number" id="freeDeliveryThreshold" min="0" step="1" required>
             <div class="field-hint">Set to 0 if you never want to waive delivery charges.</div>
           </div>
-          <button type="submit" class="checkout-btn" id="saveSettingsBtn">Save delivery settings</button>
+          <h3 class="section-heading-sm">Admin session</h3>
+          <div class="field">
+            <label for="sessionHours">Stay signed in for (hours)</label>
+            <input type="number" id="sessionHours" min="1" max="720" step="1" required>
+            <div class="field-hint">1 to 720 hours (30 days). Applies straight away to everyone signed in — shorten it to sign out older sessions. Changing it does not affect customers.</div>
+          </div>
+          <button type="submit" class="checkout-btn" id="saveSettingsBtn">Save settings</button>
         </form>
       </div>
     </section>

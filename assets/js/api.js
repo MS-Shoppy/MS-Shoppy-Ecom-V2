@@ -23,7 +23,9 @@ async function callApi(action, payload = {}) {
 
   const data = await res.json();
   if (!data.success) {
-    throw new Error(data.error || 'Something went wrong');
+    const err = new Error(data.error || 'Something went wrong');
+    err.code = data.code || '';
+    throw err;
   }
   return data;
 }

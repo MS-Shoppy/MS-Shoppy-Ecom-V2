@@ -40,9 +40,9 @@
 
 <section class="hero">
   <div class="container">
-    <span class="hero-eyebrow">Feel Free to Call us</span>
-    <h1>From Handmade Creations to Healthy Traditions</h1>
-    <p></p>
+    <span class="hero-eyebrow">Cash on delivery, everywhere we ship</span>
+    <h1>Order today, pay at your doorstep.</h1>
+    <p>No card, no advance, no fuss — just tell us where to bring it.</p>
   </div>
 </section>
 
@@ -230,6 +230,33 @@
     <div class="account-info" id="accountInfo"></div>
     <button class="icon-btn" id="logoutBtn">Log out</button>
     <h3 class="section-heading-sm">My orders</h3>
+    <div class="my-orders-tools" id="myOrdersTools" style="display:none;">
+      <input type="search" id="mySearch" placeholder="Search order no. or product…">
+      <select id="myStatus" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option value="active">In progress</option>
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Out for delivery">Out for delivery</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <select id="myPeriod" aria-label="Filter by period">
+        <option value="">Any time</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 3 months</option>
+        <option value="365">Last year</option>
+      </select>
+      <select id="mySort" aria-label="Sort orders">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="amountDesc">Amount: high → low</option>
+        <option value="amountAsc">Amount: low → high</option>
+      </select>
+      <button class="icon-btn" id="myClear">Clear</button>
+      <button class="icon-btn" id="myRefresh">↻ Refresh</button>
+      <span class="my-orders-count" id="myOrdersCount"></span>
+    </div>
     <div id="myOrdersWrap"><div class="loading-state">Loading your orders…</div></div>
   </div>
 </div>
